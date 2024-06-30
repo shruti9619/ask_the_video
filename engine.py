@@ -7,7 +7,6 @@ logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-
 def run_engine(video_id: str, query: str):
     logger.info(f"Run engine: Processing video id: {video_id}")
 
