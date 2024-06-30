@@ -12,6 +12,7 @@ langchain-openai = "^0.1.8"
 python-dotenv = "^1.0.1"
 youtube-transcript-api = "^0.6.2"
 pandas = "^2.2.2"
+streamlit = "^1.36.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
