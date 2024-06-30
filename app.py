@@ -13,7 +13,7 @@ def get_chat(response):
 
     # stream the response
     with st.chat_message("AI"):
-        # response = st.write_stream(response)
+        #response = st.write_stream(response)
         for chunk in response:
             print(chunk, end="", flush=True)
 
