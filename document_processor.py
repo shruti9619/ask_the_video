@@ -1,13 +1,13 @@
 import logging
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain_core.runnables import RunnablePassthrough
 
-logging.basicConfig()
+logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 def setup_vector_store(docs: list):
@@ -17,13 +17,15 @@ def setup_vector_store(docs: list):
         model_name="BAAI/bge-small-en-v1.5"
     )
 
-    vector_store = FAISS.from_embeddings(
-        [doc['text'] for doc in docs],
-        embedding_model,
+    vector_store = FAISS.from_texts(
+        texts=[doc['text'] for doc in docs],
+        embedding=embedding_model,
     )
 
     return vector_store.as_retriever()
 
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
 
 def rag_pipeline(retriever, query: str):
     logger.info("Setting up RAG pipeline")
@@ -33,26 +35,29 @@ def rag_pipeline(retriever, query: str):
     model_kwargs = {'temperature': 1e-5},
     )
 
-    prompt = """ You are a youtube assistant who helps answer user questions and 
+    custom_prompt = """ You are a youtube assistant who helps answer user questions and 
     user requests by looking at the video transcripts.
 
     The user query and transcript would be given below as information to you.
+    If you don't know the answer, say that you don't know. 
+    Use three sentences maximum and keep the answer concise.
 
     Transcript documents for reference: {transcript_docs}
     Query: {query}
 
     """
 
-    prompt = ChatPromptTemplate.from_template("You are a youtube assistant who looks")
+    prompt = PromptTemplate.from_template(custom_prompt)
     parser = StrOutputParser()
     chain = (
-            {"context": retriever, "question": RunnablePassthrough()}
+            {"transcript_docs": retriever | format_docs, "query": RunnablePassthrough()}
             | prompt  
-            | llm 
-            | parser
+            # | llm 
+            # | parser
             )
 
     return chain.stream({ query})
+
 
 
 

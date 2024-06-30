@@ -3,8 +3,9 @@ import logging
 from document_processor import rag_pipeline, setup_vector_store
 from yt_transcripts import get_transcript
 
+logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.NOTSET)
+
 
 
 def run_engine(video_id: str, query: str):

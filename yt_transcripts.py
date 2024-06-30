@@ -1,8 +1,8 @@
 import logging
 from youtube_transcript_api import YouTubeTranscriptApi
 
+logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.NOTSET)
 
 
 def get_transcript(video_id: str) -> list:
