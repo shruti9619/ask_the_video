@@ -1,13 +1,18 @@
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+import logging
+
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain_core.runnables import RunnablePassthrough
 
-
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 def setup_vector_store(docs: list):
+    logger.info("Setting up vector store")
+
     embedding_model = HuggingFaceEmbeddings(
         model_name="BAAI/bge-small-en-v1.5"
     )
@@ -21,6 +26,7 @@ def setup_vector_store(docs: list):
 
 
 def rag_pipeline(retriever, query: str):
+    logger.info("Setting up RAG pipeline")
     llm = HuggingFacePipeline.from_model_id(
     model_id ="gpt2", 
     task="text-generation",

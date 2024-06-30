@@ -1,13 +1,14 @@
 import logging
 
 from document_processor import rag_pipeline, setup_vector_store
-
 from yt_transcripts import get_transcript
 
-logger = logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.NOTSET)
 
 
 def run_engine(video_id: str, query: str):
+    logger.info(f"Run engine: Processing video id: {video_id}")
 
     try:
         transcript = get_transcript(video_id)
