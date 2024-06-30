@@ -1,0 +1,37 @@
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_huggingface.llms import HuggingFacePipeline
+
+
+
+
+def setup_vector_store(docs: list):
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-small-en-v1.5"
+    )
+
+    vector_store = FAISS.from_embeddings(
+        [doc['text'] for doc in docs],
+        embedding_model,
+    )
+
+    return vector_store
+
+
+def rag_pipeline(vector_store, query: str):
+    llm = HuggingFacePipeline.from_model_id(
+    model_id ="gpt2", 
+    task="text-generation",
+    model_kwargs = {'temperature': 1e-5},
+    )
+
+    prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+    parser = StrOutputParser()
+    chain = prompt | vector_store | llm | parser
+
+    return chain
+
+
+
