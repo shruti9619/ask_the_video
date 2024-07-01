@@ -1,11 +1,13 @@
 <h1> Read The Video</h1>
 LLM RAG Application to take youtube videos with available transcripts and search the content in text without having to go through the whole video
 
+</br>
+</br>
 
 `streamlit run app.py`
 
 
-<h6>Resources and References</h6>
+<h4>Resources and References</h4>
 <ul>
 <li>https://python.langchain.com/v0.2/docs/tutorials/rag/#go-deeper-4</li>
 <li>https://huggingface.co/numind/NuExtract-tiny/tree/main</li>
