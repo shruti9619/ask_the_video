@@ -4,7 +4,6 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from langchain_huggingface.llms import HuggingFacePipeline
 from langchain_core.runnables import RunnablePassthrough
 
 logging.root.setLevel(logging.INFO)
@@ -27,15 +26,8 @@ def setup_vector_store(docs: list):
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
-def rag_pipeline(retriever, query: str):
+def rag_pipeline(retriever, query: str, llm):
     logger.info("Setting up RAG pipeline")
-
-    llm = HuggingFacePipeline.from_model_id(
-    model_id ="numind/NuExtract-tiny", 
-    task = "text-generation",
-    model_kwargs = {'temperature': 1e-5, 'do-sample': True},
-    pipeline_kwargs={"max_new_tokens": 200}
-    )
 
     custom_prompt = """ You are a youtube assistant who helps answer user questions and user requests by looking at the video transcripts.
     The user query and transcript would be given below as information to you. If you don't know the answer, say that you don't know. Use three sentences maximum and keep the answer concise.
