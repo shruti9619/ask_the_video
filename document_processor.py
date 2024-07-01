@@ -33,7 +33,7 @@ def rag_pipeline(retriever, query: str):
     llm = HuggingFacePipeline.from_model_id(
     model_id ="numind/NuExtract-tiny", 
     task = "text-generation",
-    model_kwargs = {'temperature': 1e-5},
+    model_kwargs = {'temperature': 1e-5, 'do-sample': True},
     pipeline_kwargs={"max_new_tokens": 200}
     )
 
