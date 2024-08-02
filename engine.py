@@ -8,7 +8,7 @@ logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def load_llm_model(model_type:str = 'OAI'):
+def load_llm_model(model_type:str = 'HF'):
     logger.info("Setting up LLM Model")
 
     if model_type == 'HF':
