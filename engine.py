@@ -8,11 +8,14 @@ logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def load_llm_model(model_type:str = 'HF'):
+def load_llm_model(model_type:str = 'OAI'):
     logger.info("Setting up LLM Model")
 
     if model_type == 'HF':
         return init_llm.init_huggingface_llm()
+
+    if model_type =='OAI':
+        return init_llm.init_openai_llm()
 
 
 def run_engine(video_id: str, query: str):
@@ -35,6 +38,8 @@ def run_engine(video_id: str, query: str):
         vector_store = setup_vector_store(transcript)
         response = rag_pipeline(vector_store, query, llm)
         return response
+    else:
+        logger.error("failure in fetching transcript")
 
 
 

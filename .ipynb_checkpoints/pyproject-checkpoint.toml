@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "readthevideo"
+version = "0.0.1"
+description = "LLM RAG Application to take youtube videos with available transcripts and search the content in text without having to go through the whole video"
+authors = ["Shruti Iyyer"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.2.5"
+langchain-openai = "^0.1.8"
+python-dotenv = "^1.0.1"
+youtube-transcript-api = "^0.6.2"
+pandas = "^2.2.2"
+streamlit = "^1.36.0"
+langchain-core = "^0.2.10"
+langchain-community = "^0.2.6"
+gpt4all = "^2.7.0"
+huggingface-hub = "^0.23.4"
+langchain-huggingface = "^0.0.3"
+faiss-cpu = "^1.8.0.post1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+isort = "^5.13.2"
+pytest = "^8.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
