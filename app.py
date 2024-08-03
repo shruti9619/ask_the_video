@@ -19,6 +19,7 @@ def stream_response(response):
     if success_flag:
         # stream the response
         response = st.write_stream(model_response)
+    return response
 
 st.set_page_config(
     page_title="Ask the Video",
@@ -87,10 +88,8 @@ if prompt := st.chat_input("Ask the video!"):
                 
             status.update(label="Generating response...", state="running", expanded=True)
             response = run_engine(llm, st.session_state.vector_store, prompt)
-            stream_response(response= response)
+            response = stream_response(response= response)
             status.update(label="Query Complete", state="complete", expanded=True)
-            response = response[0]
-
-
+            
     # Add assistant response to chat history
     st.session_state.chat_history.append({"role": "assistant", "content": response})

@@ -29,7 +29,6 @@ def load_transcripts(video_id:str) -> list:
     return transcript
 
 
-
 def run_engine(llm, vector_store, query: str):
     logger.info(f"Run engine")
     success_flag = False
