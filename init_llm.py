@@ -1,15 +1,12 @@
-import logging
-import os
-
-
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain_openai import AzureChatOpenAI
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
+from setup_configs import get_logger
 
-logging.root.setLevel(logging.INFO)
-logger = logging.getLogger(__name__)
+
+logger = get_logger()
 
 
 def init_huggingface_llm():

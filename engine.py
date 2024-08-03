@@ -1,11 +1,10 @@
-import logging
-
 from document_processor import rag_pipeline, setup_vector_store
 from yt_transcripts import get_transcript
 import init_llm
 
-logging.root.setLevel(logging.INFO)
-logger = logging.getLogger(__name__)
+from setup_configs import get_logger
+
+logger = get_logger()
 
 
 def load_llm_model(model_type:str = 'OAI'):

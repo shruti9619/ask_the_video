@@ -1,12 +1,9 @@
-import logging
-
 import streamlit as st
 
-from setup_configs import load_configs
+from setup_configs import load_configs, get_logger
 from engine import run_engine, load_llm_model
 
-logging.root.setLevel(logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 load_configs()
 

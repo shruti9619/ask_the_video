@@ -1,30 +1,35 @@
-import logging
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
-logging.root.setLevel(logging.INFO)
-logger = logging.getLogger(__name__)
+
+from setup_configs import get_logger
+
+
+logger = get_logger()
+
 
 def setup_vector_store(docs: list):
     logger.info("Setting up vector store")
 
     embedding_model = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-small-en-v1.5"
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
     vector_store = FAISS.from_texts(
         texts=[doc['text'] for doc in docs],
         embedding=embedding_model,
     )
-
+    logger.info("vector store setup successful")
     return vector_store.as_retriever(k = 50)
 
 def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+    logger.info(f"Number of retrievals {len(docs)}")
+    join_docs = "\n\n".join(doc.page_content for doc in docs)
+    logger.info(join_docs)
+    return join_docs
 
 def rag_pipeline(retriever, query: str, llm):
     logger.info("Setting up RAG pipeline")
