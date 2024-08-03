@@ -23,7 +23,7 @@ def setup_vector_store(docs: list):
         embedding=embedding_model,
     )
     logger.info("vector store setup successful")
-    return vector_store.as_retriever(k = 50)
+    return vector_store.as_retriever(k = 10)
 
 def format_docs(docs):
     logger.info(f"Number of retrievals {len(docs)}")
