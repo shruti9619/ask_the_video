@@ -1,7 +1,6 @@
 import logging
 import os
 
-from dotenv import load_dotenv
 
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain_openai import AzureChatOpenAI
@@ -12,7 +11,6 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
 
 def init_huggingface_llm():
     
@@ -28,11 +26,6 @@ def init_huggingface_llm():
     return llm
 
 def init_openai_llm():
-
-    os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT_USEAST")
-    os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY_USEAST")
-    os.environ["OPENAI_API_TYPE"] = os.getenv("OPENAI_API_TYPE")
-    os.environ["OPENAI_API_VERSION"] = os.getenv("OPENAI_API_VERSION")
 
     llm = AzureChatOpenAI(
                     deployment_name='gpt-4-turbo',

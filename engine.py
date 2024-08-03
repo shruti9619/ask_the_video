@@ -8,7 +8,7 @@ logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def load_llm_model(model_type:str = 'HF'):
+def load_llm_model(model_type:str = 'OAI'):
     logger.info("Setting up LLM Model")
 
     if model_type == 'HF':
@@ -20,11 +20,13 @@ def load_llm_model(model_type:str = 'HF'):
 
 def run_engine(video_id: str, query: str):
     logger.info(f"Run engine: Processing video id: {video_id}")
+    success_flag = True
 
     try:
         transcript = get_transcript(video_id)
     except Exception as e:
         transcript = None
+        success_flag = False
 
     if transcript:
 
@@ -33,13 +35,16 @@ def run_engine(video_id: str, query: str):
         except Exception as e:
             logger.error("Error while loading LLM model")
             logger.error(e)
-            return []
+            success_flag = False
+            return [], success_flag
 
         vector_store = setup_vector_store(transcript)
         response = rag_pipeline(vector_store, query, llm)
-        return response
+        return response, success_flag
     else:
+        success_flag = False
         logger.error("failure in fetching transcript")
+        return [], success_flag
 
 
 

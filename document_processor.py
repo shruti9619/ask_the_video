@@ -29,8 +29,10 @@ def format_docs(docs):
 def rag_pipeline(retriever, query: str, llm):
     logger.info("Setting up RAG pipeline")
 
-    custom_prompt = """ You are a youtube assistant who helps answer user questions and user requests by looking at the video transcripts.
-    The user query and transcript would be given below as information to you. If you don't know the answer, say that you don't know. Use three sentences maximum and keep the answer concise.
+    custom_prompt = """ You are a youtube assistant who helps answer user questions and user requests 
+    by looking at the video transcripts. The user query and transcript would be given below as information to you. 
+    If you don't know the answer, say that you don't know. Take content only from the provided context and do not add 
+    your own knowledge without the context being present in the transcripts while forming the answers.
 
     Transcript documents for reference: 
     {transcript_docs}
