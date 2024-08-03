@@ -21,7 +21,7 @@ def setup_vector_store(docs: list):
         embedding=embedding_model,
     )
 
-    return vector_store.as_retriever(k = 10)
+    return vector_store.as_retriever(k = 50)
 
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)

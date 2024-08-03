@@ -13,15 +13,12 @@ load_configs()
 
 def get_chat(response):
     logger.info("Getting chat response in app")
+    model_response, success_flag = response[0], response[1]
 
-    # stream the response
-    with st.chat_message("AI"):
-        response = st.write_stream(response)
-        print("Model Response: ")
-        for chunk in response:
-            print(chunk, 
-                  end="", 
-                  flush=True)
+    if success_flag:
+        # stream the response
+        with st.chat_message("AI"):
+            response = st.write_stream(model_response)
 
 
 st.title("Ask the Video")
