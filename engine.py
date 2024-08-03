@@ -1,4 +1,4 @@
-from document_processor import rag_pipeline, setup_vector_store
+from document_processor import rag_pipeline, populate_vector_store
 from yt_transcripts import get_transcript
 import init_llm
 
@@ -6,6 +6,9 @@ from setup_configs import get_logger
 
 logger = get_logger()
 
+
+def load_vector_store(transcript: list):
+    return populate_vector_store(transcript)
 
 def load_llm_model(model_type:str = 'OAI'):
     logger.info("Setting up LLM Model")
@@ -16,34 +19,28 @@ def load_llm_model(model_type:str = 'OAI'):
     if model_type =='OAI':
         return init_llm.init_openai_llm()
 
-
-def run_engine(video_id: str, query: str):
-    logger.info(f"Run engine: Processing video id: {video_id}")
-    success_flag = True
-
+def load_transcripts(video_id:str) -> list:
+    logger.info(f"load_transcripts: Processing video id: {video_id}")
     try:
         transcript = get_transcript(video_id)
     except Exception as e:
-        transcript = None
-        success_flag = False
-
-    if transcript:
-
-        try:
-            llm = load_llm_model()
-        except Exception as e:
-            logger.error("Error while loading LLM model")
-            logger.error(e)
-            success_flag = False
-            return [], success_flag
-
-        vector_store = setup_vector_store(transcript)
-        response = rag_pipeline(vector_store, query, llm)
-        return response, success_flag
-    else:
-        success_flag = False
+        transcript = []
         logger.error("failure in fetching transcript")
-        return [], success_flag
+    return transcript
+
+
+
+def run_engine(llm, vector_store, query: str):
+    logger.info(f"Run engine")
+    success_flag = False
+    try:
+        response = rag_pipeline(vector_store, query, llm)
+        success_flag = True
+    except Exception as e:
+        logger.error(f"engine failed for query: {query} with exception {e}")
+        success_flag = False
+    return response, success_flag
+
 
 
 

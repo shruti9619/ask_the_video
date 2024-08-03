@@ -1,21 +1,30 @@
 import streamlit as st
+import time
 
 from setup_configs import load_configs, get_logger
-from engine import run_engine, load_llm_model
+from engine import run_engine, load_llm_model, load_transcripts, load_vector_store
 
 logger = get_logger()
 
 load_configs()
 
 
-def get_chat(response):
+st.session_state.setdefault("chat_history", [{"role": "assistant", "content": "How can I help you?"}])
+
+
+def stream_response(response):
     logger.info("Getting chat response in app")
     model_response, success_flag = response[0], response[1]
 
     if success_flag:
         # stream the response
-        with st.chat_message("AI"):
-            response = st.write_stream(model_response)
+        response = st.write_stream(model_response)
+
+st.set_page_config(
+    page_title="Ask the Video",
+    layout="wide",
+)
+
 
 
 st.title("Ask the Video")
@@ -25,30 +34,63 @@ st.write(
          to your questions on the youtube videos you want to."
 )
 
+with st.sidebar:
 
-with st.form("user_input"):
-    st.text_input(
-        label="Video Id",
-        key="video_id",
-        placeholder="For example FgakZw6K1QQ from the url \
-    https://www.youtube.com/watch?v=FgakZw6K1QQ",
+    st.write("__Model to use__")
+    llm_option = st.selectbox(
+        label = "Select LLM",
+        options = ["GPT-4"],
+        key="llm_option",
+
     )
+    st.write("__Enter the Video ID:__")
+    with st.form("user_input"):
+        st.text_input(
+            label="__Video Id__",
+            key="video_id",
+            placeholder="For example FgakZw6K1QQ from the url \
+        https://www.youtube.com/watch?v=FgakZw6K1QQ",
+        )
 
-    st.text_input(
-        label="Query/Instruction",
-        key="user_query",
-        placeholder="For example: What is PCA?",
-    )
+        submit_button = st.form_submit_button(label='Load Video')
 
-    submitted = st.form_submit_button('Submit')
-    if submitted:
-        if st.session_state.video_id and st.session_state.user_query:
-            logger.info("Video Id and Query received")
-            get_chat(run_engine(st.session_state.video_id, 
-                                st.session_state.user_query, 
-                                ))
-        else:
-            logger.info("Video Id or Query not received or LLM not loaded yet")
-            st.write("Please provide both video id and query ")
+        if submit_button:
+            with st.status("Loading transcripts...", expanded=True) as status:
+                status.update(label="Loading transcripts...", state="running", expanded=True)
+                st.session_state.transcript = load_transcripts(st.session_state.video_id)
+                if st.session_state.transcript:
+                    st.session_state.vector_store = load_vector_store(st.session_state.transcript)
+                    status.update(label="Transcripts Loaded", state="complete", expanded=True)
+                else:
+                    status.update(label="Transcripts Loading Failed", state="failed", expanded=True)
 
 
+
+# Display chat messages from history on app rerun
+for message in st.session_state.chat_history:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Accept user input
+if prompt := st.chat_input("Ask the video!"):
+    # Add user message to chat history
+    st.session_state.chat_history.append({"role": "user", "content": prompt})
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        with st.status("Parsing Question...", expanded=True) as status:
+            if st.session_state.llm_option == "GPT-4":
+                llm = load_llm_model(model_type= "OAI")
+                
+            status.update(label="Generating response...", state="running", expanded=True)
+            response = run_engine(llm, st.session_state.vector_store, prompt)
+            stream_response(response= response)
+            status.update(label="Query Complete", state="complete", expanded=True)
+            response = response[0]
+
+
+    # Add assistant response to chat history
+    st.session_state.chat_history.append({"role": "assistant", "content": response})

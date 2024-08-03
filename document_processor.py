@@ -11,7 +11,7 @@ from setup_configs import get_logger
 logger = get_logger()
 
 
-def setup_vector_store(docs: list):
+def populate_vector_store(docs: list):
     logger.info("Setting up vector store")
 
     embedding_model = HuggingFaceEmbeddings(
