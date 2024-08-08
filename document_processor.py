@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser

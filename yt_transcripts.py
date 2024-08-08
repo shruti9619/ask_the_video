@@ -15,7 +15,8 @@ def process_transcript(transcript: list, num_chunk_combine:int = 15) -> list:
 def get_transcript(video_id: str) -> list:
     logger.info(f"Getting transcript for video id: {video_id}")
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["en"])
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["en"]
+        )
         logger.info(
             f"Transcript for video id: {video_id} with length {len(transcript)} \
                      fetched successfully"

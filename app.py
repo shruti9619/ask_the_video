@@ -63,7 +63,7 @@ with st.sidebar:
                     st.session_state.vector_store = load_vector_store(st.session_state.transcript)
                     status.update(label="Transcripts Loaded", state="complete", expanded=True)
                 else:
-                    status.update(label="Transcripts Loading Failed", state="failed", expanded=True)
+                    status.update(label="Transcripts Loading Failed", state="error", expanded=True)
 
 
 
