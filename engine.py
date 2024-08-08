@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from document_processor import rag_pipeline, populate_vector_store
 from yt_transcripts import get_transcript
 import init_llm
@@ -29,11 +31,11 @@ def load_transcripts(video_id:str) -> list:
     return transcript
 
 
-def run_engine(llm, vector_store, query: str):
+def run_engine(llm, vector_store, query: str, chat_history: List[Dict] = []):
     logger.info(f"Run engine")
     success_flag = False
     try:
-        response = rag_pipeline(vector_store, query, llm)
+        response = rag_pipeline(vector_store, query, llm, chat_history)
         success_flag = True
     except Exception as e:
         logger.error(f"engine failed for query: {query} with exception {e}")

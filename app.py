@@ -74,8 +74,7 @@ for message in st.session_state.chat_history:
 
 # Accept user input
 if prompt := st.chat_input("Ask the video!"):
-    # Add user message to chat history
-    st.session_state.chat_history.append({"role": "user", "content": prompt})
+    
     # Display user message in chat message container
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -87,9 +86,12 @@ if prompt := st.chat_input("Ask the video!"):
                 llm = load_llm_model(model_type= "OAI")
                 
             status.update(label="Generating response...", state="running", expanded=True)
-            response = run_engine(llm, st.session_state.vector_store, prompt)
+            response = run_engine(llm, st.session_state.vector_store, prompt, st.session_state.chat_history)
             response = stream_response(response= response)
             status.update(label="Query Complete", state="complete", expanded=True)
+    
+    # Add user message to chat history
+    st.session_state.chat_history.append({"role": "user", "content": prompt})
             
     # Add assistant response to chat history
     st.session_state.chat_history.append({"role": "assistant", "content": response})

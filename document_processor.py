@@ -31,7 +31,8 @@ def format_docs(docs):
     logger.info(join_docs)
     return join_docs
 
-def rag_pipeline(retriever, query: str, llm):
+
+def rag_pipeline(retriever, query: str, llm, chat_history: List[Dict] = []):
     logger.info("Setting up RAG pipeline")
 
     custom_prompt = """ You are a youtube assistant who helps answer user questions and user requests 
