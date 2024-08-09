@@ -1,7 +1,18 @@
 from typing import List, Dict
+from langchain_core.documents import Document
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+# stemming
+from nltk.stem import PorterStemmer
+
+nltk.download('punkt')
+nltk.download('stopwords')
 
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain.retrievers import EnsembleRetriever
+from langchain_community.retrievers import BM25Retriever
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
@@ -11,6 +22,15 @@ from setup_configs import get_logger
 
 
 logger = get_logger()
+
+def preprocess_func(text: str) -> List[str]:
+    # Lowercase the input text
+    lowered = text.lower()
+    text_tokens = word_tokenize(lowered)
+    ps = PorterStemmer()
+    stop_words = set(stopwords.words('english'))
+    remove_sw = [ps.stem(word) for word in text_tokens if not word in stopwords.words()]
+    return remove_sw
 
 
 def populate_vector_store(docs: list):
@@ -24,8 +44,14 @@ def populate_vector_store(docs: list):
         texts=[doc['text'] for doc in docs],
         embedding=embedding_model,
     )
+
+    bm25_retriever = BM25Retriever.from_texts(texts= [doc['text'] for doc in docs],  preprocess_func= preprocess_func, 
+                        k = 10)
+    semantic_retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+    ensemble_retriever = EnsembleRetriever(retrievers= [bm25_retriever, semantic_retriever], 
+                            weights=[0.5, 0.5], k = 10)
     logger.info("vector store setup successful")
-    return vector_store.as_retriever(k = 10)
+    return ensemble_retriever
 
 def format_docs(docs):
     logger.info(f"Number of retrievals {len(docs)}")
