@@ -60,7 +60,7 @@ with st.sidebar:
                 status.update(label="Loading transcripts...", state="running", expanded=True)
                 st.session_state.transcript = load_transcripts(st.session_state.video_id)
                 if st.session_state.transcript:
-                    st.session_state.vector_store = load_vector_store(st.session_state.transcript)
+                    st.session_state.retriever = load_retriever(st.session_state.transcript)
                     status.update(label="Transcripts Loaded", state="complete", expanded=True)
                 else:
                     status.update(label="Transcripts Loading Failed", state="error", expanded=True)
@@ -86,7 +86,7 @@ if prompt := st.chat_input("Ask the video!"):
                 llm = load_llm_model(model_type= "OAI")
                 
             status.update(label="Generating response...", state="running", expanded=True)
-            response = run_engine(llm, st.session_state.vector_store, prompt, st.session_state.chat_history)
+            response = run_engine(llm, st.session_state.retriever, prompt, st.session_state.chat_history)
             response = stream_response(response= response)
             status.update(label="Query Complete", state="complete", expanded=True)
     
