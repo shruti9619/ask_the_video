@@ -9,7 +9,7 @@ from setup_configs import get_logger
 logger = get_logger()
 
 
-def load_vector_store(transcript: list):
+def load_retriever(transcript: list):
     return populate_vector_store(transcript)
 
 def load_llm_model(model_type:str = 'OAI'):
@@ -31,11 +31,11 @@ def load_transcripts(video_id:str) -> list:
     return transcript
 
 
-def run_engine(llm, vector_store, query: str, chat_history: List[Dict] = []):
+def run_engine(llm, retriever, query: str, chat_history: List[Dict] = []):
     logger.info(f"Run engine")
     success_flag = False
     try:
-        response = rag_pipeline(vector_store, query, llm, chat_history)
+        response = rag_pipeline(retriever, query, llm, chat_history)
         success_flag = True
     except Exception as e:
         logger.error(f"engine failed for query: {query} with exception {e}")
