@@ -2,7 +2,7 @@ import streamlit as st
 import time
 
 from setup_configs import load_configs, get_logger
-from engine import run_engine, load_llm_model, load_transcripts, load_vector_store
+from engine import run_engine, load_llm_model, load_transcripts, load_retriever
 
 logger = get_logger()
 
